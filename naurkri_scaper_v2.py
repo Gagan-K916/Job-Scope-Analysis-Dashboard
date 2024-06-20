@@ -6,7 +6,19 @@ import csv
 
 from time import sleep
 
-target_roles = ['data analyst', 'data scientist', 'software engineer', 'data engineer', 'database administrator', 'machine learning engineer', 'research analyst', 'operations analyst', 'web designer', 'java developer']
+target_roles = [
+    'data analyst', 
+    'data scientist', 
+    'software engineer', 
+    'data engineer', 
+    'database administrator', 
+    'machine learning engineer', 
+    'research analyst', 
+    'operations analyst', 
+    'web designer', 
+    'java developer'
+    ]
+
 base_url = 'https://www.naukri.com/'
 
 options = webdriver.EdgeOptions()
@@ -62,7 +74,7 @@ for target_role in target_roles:
         no_of_posts, no_of_pages = getPageNumber(listings_soup)
         print(f"Found a total of {no_of_posts} posts i.e {no_of_pages} pages of posts.")
 
-        for no in range(1,  no_of_pages + 1):
+        for no in range(1,  2):#no_of_pages + 1
             count = 0
             page_url = f"{url}-{no}"
 
@@ -85,10 +97,11 @@ for target_role in target_roles:
                         title = None
 
                     if  post_soup.find('div', class_ = 'styles_jd-header-comp-name__MvqAI') != None:
-                        company = post_soup.find('div', class_ = 'styles_jhc__jd-top-head__MFoZl').h1.text
+                        company = post_soup.find('div', class_ = 'styles_jhc__jd-top-head__MFoZl').a.text
 
                     else:
                         company = None
+                    print(company)
 
                     if post_soup.find('div', class_ = 'styles_jhc__exp__k_giM')!=None:
                         experience = post_soup.find('div', class_ = 'styles_jhc__exp__k_giM').span.text
@@ -136,32 +149,38 @@ for target_role in target_roles:
                         postgrad = None
                     if len(temp) == 7:
                         role, industry_type, dept, emp_type, role_category, undergrad, postgrad = tuple(temp)
+
                     role = role.replace('Role: ','').replace(',','')
                     industry_type = industry_type.replace('Industry Type: ','').replace(',','')
                     dept = dept.replace('Department: ', '').replace(',','')
                     emp_type = emp_type.replace('Employment Type: ','')
                     role_category = role_category.replace('Role Category: ', '')
+
                     if undergrad:
                         undergrad = undergrad.replace('UG: ','')
                     else:
                         undergrad = None
+
                     if postgrad:
                         postgrad = postgrad.replace('PG: ','')
                     else:
                         postgrad = None
+
                     skills = []
                     for skill in post_soup.find_all('a', class_ = ['styles_chip__7YCfG styles_non-clickable__RM_KJ','styles_chip__7YCfG styles_clickable__dUW8S']):
                         skills.append(skill.text)
-
                     skills = ", ".join(skills)
                     
                     writer.writerow([ title, link, company, wfhType, experience, salary, location, rating, n_reviews, post_age, openings, n_applicants, role, industry_type, dept, emp_type, role_category, undergrad, postgrad, skills])
+                    
                     count += 1
+
                 except:
                     with open('datasets/errors.csv', 'w', newline='') as errorfile:
                         error_writer = csv.writer(errorfile)
                         error_writer.writerow([link, role])
-                        continue    
+                        continue  
+                      
         print(f"Successfully scraped {count} {target_role} posts out of {no_of_posts} posts!")
 
         
