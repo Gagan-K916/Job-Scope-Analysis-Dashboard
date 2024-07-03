@@ -7,16 +7,16 @@ import csv
 from time import sleep
 
 target_roles = [
-    # # 'data analyst', 
-    # 'data scientist', 
-    # 'data engineer', 
-    # 'database administrator', 
-    # 'machine learning engineer'
+    'data analyst', 
+    'data scientist', 
+    'data engineer', 
+    'database administrator', 
+    'machine learning engineer'
     'research analyst', 
     'operations analyst', 
     'web designer', 
     'java developer'
-    # 'software engineer', 
+    'software engineer', 
     ]
 
 base_url = 'https://www.naukri.com/'
@@ -94,7 +94,7 @@ for target_role in target_roles:
                 page_url = f"{base_url}{'-'.join(target_role.split(' '))}-jobs-{no}?wfhType={wfh_index}"
 
                 driver.get(page_url)
-                sleep(1.5)#2
+                sleep(2.25)#2
 
                 page_soup = BeautifulSoup(driver.page_source, 'html.parser')
 
